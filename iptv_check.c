@@ -76,7 +76,12 @@ static void signal_callback_handler(int signum) {
 
 static int print_help(void)
 {
-    printf ("iptv_check [options] <ip-address>:<port-number>\n");
+    printf ("Usage: iptv_check [OPTIONS] <ip-address>:<port-number>\n");
+    printf ("\nOptions:\n");
+    printf ("  -d               Run as daemon\n");
+    printf ("  -i <interface>   Choose a network device to send IGMP\n");
+    printf ("  -l <logfile>     Write log information to a given file\n");
+    printf ("\n");
     exit(0);
 }
 
@@ -99,6 +104,8 @@ int main(int argc, const char **argv)
     int portnumber = 0;
     in_addr_t interface_addr;
     pid_t pid, sid;
+    
+    printf ("iptv_check, a multicast rtp packet drop checker.\n");
 
     while ((c = getopt(argc, (char * const*) argv, "di:l:")) != -1) {
         switch (c) {
@@ -124,7 +131,6 @@ int main(int argc, const char **argv)
     }
 
     if (optind >= argc) {
-        printf ("No ip address and portnumber\n");
         print_help();
     }
     
