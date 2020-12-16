@@ -43,24 +43,24 @@ int rtp_in(uint8_t *data, int32_t len)
     time_t now;
     const char loopchar[4] = "|/-\\";
     static int loopcharcntr = 0;
-    
+
     data_count+=len;
     diff = seq - previous_seq;
-    
+
     time(&now);
     if (first_time) {
         first_time = 0;
-        tm = gmtime(&now);        
-        log_printf ("[%02d-%02d-%04d %02d:%02d:%02d] ", tm->tm_mday, tm->tm_mon+1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min, tm->tm_sec);        
-        log_printf ("start @ sequence: 0x%04x, timestamp: %u\n", seq, ntohl(hdr->ts));       
+        tm = gmtime(&now);
+        log_printf ("[%02d-%02d-%04d %02d:%02d:%02d] ", tm->tm_mday, tm->tm_mon+1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min, tm->tm_sec);
+        log_printf ("start @ sequence: 0x%04x, timestamp: %u\n", seq, ntohl(hdr->ts));
     }
     else if (diff != 1) {
-        tm = gmtime(&now);        
-        log_printf ("[%02d-%02d-%04d %02d:%02d:%02d] ", tm->tm_mday, tm->tm_mon+1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min, tm->tm_sec);        
+        tm = gmtime(&now);
+        log_printf ("[%02d-%02d-%04d %02d:%02d:%02d] ", tm->tm_mday, tm->tm_mon+1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min, tm->tm_sec);
         log_printf ("lost packets between sequence 0x%04x and 0x%04x, lost %d frames @ timestamp: %u\n", previous_seq, seq, diff, ntohl(hdr->ts));
-    } 
+    }
     previous_seq = seq;
-    
+
     if (!runasdaemon) {
         /* Not go to measure the bitrate when we are in daemon mode */
         if (prev_time != now) {
@@ -77,13 +77,13 @@ int rtp_in(uint8_t *data, int32_t len)
             }
             else if (data_count < (1024 * 1024 * 1024)) {
                 printf ("%.2f Mbps", (float)data_count / (1024 * 1024));
-            }        
+            }
 
             printf ("        \r");
             fflush(stdout);
             data_count = 0;
         }
     }
-    
+
     return 0;
 }

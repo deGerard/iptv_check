@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   iptv_check.c
  * Author: gerard
  *
@@ -37,9 +37,9 @@ FILE *logfile_fp = NULL;
  * Get ip address for the given interface
  * @param addr
  * @param ethdev
- * @return 
+ * @return
  */
-int get_ip_address(in_addr_t *addr, const char *ethdev) 
+int get_ip_address(in_addr_t *addr, const char *ethdev)
 {
     int fd;
     struct ifreq ifr;
@@ -85,7 +85,7 @@ static int print_help(void)
     exit(0);
 }
 
-int main(int argc, const char **argv) 
+int main(int argc, const char **argv)
 {
     struct sockaddr_in si_peer;
     struct sockaddr_in udp_localaddress; // my addressinformation
@@ -104,7 +104,7 @@ int main(int argc, const char **argv)
     int portnumber = 0;
     in_addr_t interface_addr;
     pid_t pid, sid;
-    
+
     printf ("iptv_check, a multicast rtp packet drop checker.\n");
 
     while ((c = getopt(argc, (char * const*) argv, "di:l:")) != -1) {
@@ -122,7 +122,7 @@ int main(int argc, const char **argv)
                 break;
         }
     }
-    
+
     if (interface) {
         if (get_ip_address(&interface_addr, interface) != 0) {
             printf ("Can't find open interface %s\n", interface);
@@ -133,7 +133,7 @@ int main(int argc, const char **argv)
     if (optind >= argc) {
         print_help();
     }
-    
+
     /* Split ip address and port number on the ':' */
     portnumberstr = (char*)argv[optind];
     ipaddress = strsep(&portnumberstr, ":");
@@ -146,14 +146,14 @@ int main(int argc, const char **argv)
         printf ("Invalid port number %d\n", portnumber);
         exit(0);
     }
-    
+
     if (logfile) {
         if (log_open(logfile) != 0) {
             printf("Can't open logfile %s\n", logfile);
             exit(0);
         }
     }
-    
+
     if (runasdaemon) {
             // Fork off the parent process
             pid = fork();
@@ -184,9 +184,9 @@ int main(int argc, const char **argv)
             close(STDIN_FILENO);
             close(STDOUT_FILENO);
             close(STDERR_FILENO);
-    }    
-    
-    
+    }
+
+
     sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sock < 0) {
         log_printf("Can't create socket\n");
@@ -198,7 +198,7 @@ int main(int argc, const char **argv)
 
     signal(SIGINT, signal_callback_handler);
     signal(SIGTERM, signal_callback_handler);
-    
+
     memset(&udp_localaddress, 0, sizeof (struct sockaddr_in));
     udp_localaddress.sin_family = AF_INET;
     udp_localaddress.sin_addr.s_addr = INADDR_ANY;
@@ -236,7 +236,7 @@ int main(int argc, const char **argv)
             rtp_in(buffer, buflen);
         }
     }
-    
+
     if (setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP, (char *) &group, sizeof (group)) < 0) {
         log_printf("Drop multicast group error");
     }
